@@ -1,0 +1,152 @@
+{% extends 'employee/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Update Employee{% else %}Add Employee{% endif %} | Employee Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        max-width: 700px;
+        margin: 0 auto;
+        border-radius: 1.25rem;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    }
+    
+    .form-header {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.5rem 2rem;
+        background-color: hsl(210, 40%, 98.5%);
+        border-top-left-radius: 1.25rem;
+        border-top-right-radius: 1.25rem;
+    }
+    
+    .form-body {
+        padding: 2.5rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: var(--secondary-color);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .error-feedback {
+        color: var(--accent-danger);
+        font-size: 0.825rem;
+        margin-top: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-card card">
+    <div class="form-header d-flex align-items-center justify-content-between">
+        <div>
+            <h4 class="mb-1 text-dark">
+                {% if form.instance.pk %}
+                    <i class="bi bi-pencil-square me-2 text-primary"></i>Update Employee Profile
+                {% else %}
+                    <i class="bi bi-person-plus-fill me-2 text-primary"></i>Add New Employee
+                {% endif %}
+            </h4>
+            <p class="text-muted mb-0 small">
+                {% if form.instance.pk %}Modify the details of employee #{{ form.instance.emp_id }}{% else %}Fill in details to onboard a new employee.{% endif %}
+            </p>
+        </div>
+        <a href="{% url 'dashboard' %}" class="btn btn-sm btn-light border rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-body">
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger alert-custom mb-4">
+                    {% for error in form.non_field_errors %}
+                        <div><i class="bi bi-exclamation-circle-fill me-2"></i>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <div class="row g-4">
+                <!-- Employee ID -->
+                <div class="col-12 col-md-6">
+                    <label for="{{ form.emp_id.id_for_label }}" class="form-label">Employee ID</label>
+                    {{ form.emp_id }}
+                    {% if form.emp_id.errors %}
+                        {% for error in form.emp_id.errors %}
+                            <div class="error-feedback"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Email -->
+                <div class="col-12 col-md-6">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        {% for error in form.email.errors %}
+                            <div class="error-feedback"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- First Name -->
+                <div class="col-12 col-md-6">
+                    <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        {% for error in form.first_name.errors %}
+                            <div class="error-feedback"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Last Name -->
+                <div class="col-12 col-md-6">
+                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        {% for error in form.last_name.errors %}
+                            <div class="error-feedback"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Department -->
+                <div class="col-12 col-md-6">
+                    <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
+                    {{ form.department }}
+                    {% if form.department.errors %}
+                        {% for error in form.department.errors %}
+                            <div class="error-feedback"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Designation -->
+                <div class="col-12 col-md-6">
+                    <label for="{{ form.designation.id_for_label }}" class="form-label">Designation</label>
+                    {{ form.designation }}
+                    {% if form.designation.errors %}
+                        {% for error in form.designation.errors %}
+                            <div class="error-feedback"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top">
+                <a href="{% url 'dashboard' %}" class="btn btn-light border px-4 py-2" style="border-radius: 0.5rem;">Cancel</a>
+                <button type="submit" class="btn btn-primary-custom px-4 py-2">
+                    <i class="bi bi-save2-fill me-2"></i>{% if form.instance.pk %}Update Profile{% else %}Add Employee{% endif %}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

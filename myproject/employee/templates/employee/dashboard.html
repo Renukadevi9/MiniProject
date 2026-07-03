@@ -1,0 +1,252 @@
+{% extends 'employee/base.html' %}
+
+{% block title %}Dashboard | Employee Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-card {
+        border-radius: 1rem;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    }
+    
+    .stats-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .stats-icon-primary {
+        background-color: var(--primary-light);
+        color: var(--primary-color);
+    }
+    
+    .stats-icon-success {
+        background-color: hsl(162, 76%, 95%);
+        color: var(--accent-success);
+    }
+
+    .stats-icon-warning {
+        background-color: hsl(36, 100%, 95%);
+        color: hsl(36, 100%, 45%);
+    }
+
+    .search-card {
+        border-radius: 1rem;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .employee-table {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    .table th {
+        font-family: 'Outfit', sans-serif;
+        background-color: hsl(210, 40%, 97%);
+        color: var(--secondary-color);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 1rem 1.25rem;
+    }
+
+    .table td {
+        padding: 1rem 1.25rem;
+        vertical-align: middle;
+        font-size: 0.9rem;
+    }
+
+    .table tr {
+        transition: background-color 0.2s ease;
+    }
+
+    .table tr:hover {
+        background-color: hsl(210, 40%, 98.5%);
+    }
+
+    .emp-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background-color: var(--primary-light);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        border: none;
+    }
+
+    .action-btn-edit {
+        background-color: var(--primary-light);
+        color: var(--primary-color);
+    }
+
+    .action-btn-edit:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .action-btn-delete {
+        background-color: hsl(349, 86%, 95%);
+        color: var(--accent-danger);
+    }
+
+    .action-btn-delete:hover {
+        background-color: var(--accent-danger);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Section -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="stats-card">
+            <div class="stats-icon stats-icon-primary">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div>
+                <p class="text-muted mb-0 small">Total Employees</p>
+                <h3 class="mb-0 text-dark">{{ total_count }}</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="stats-card">
+            <div class="stats-icon stats-icon-success">
+                <i class="bi bi-building"></i>
+            </div>
+            <div>
+                <p class="text-muted mb-0 small">Departments</p>
+                <h3 class="mb-0 text-dark">{{ dept_count }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="stats-card">
+            <div class="stats-icon stats-icon-warning">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <div>
+                <p class="text-muted mb-0 small">Active System Session</p>
+                <h3 class="mb-0 text-dark" style="font-size: 1.4rem;">Authenticated</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Add Section -->
+<div class="search-card">
+    <form method="get" action="{% url 'dashboard' %}" class="row g-3 align-items-center">
+        <div class="col-12 col-md-6 col-lg-8">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="search" class="form-control border-start-0" placeholder="Search by name, ID, department, designation or email..." value="{{ search_query }}">
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 d-flex gap-2 justify-content-md-end">
+            {% if search_query %}
+                <a href="{% url 'dashboard' %}" class="btn btn-light px-3"><i class="bi bi-x-circle me-1"></i> Clear</a>
+            {% endif %}
+            <button type="submit" class="btn btn-primary-custom px-4"><i class="bi bi-funnel-fill me-1"></i> Filter</button>
+            <a href="{% url 'add' %}" class="btn btn-success px-4 text-white" style="background-color: var(--accent-success); border-color: var(--accent-success); font-weight: 500; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem;"><i class="bi bi-plus-lg"></i> Add</a>
+        </div>
+    </form>
+</div>
+
+<!-- Employee List -->
+<div class="employee-table">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Emp ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emp in employees %}
+                <tr>
+                    <td class="fw-semibold text-primary">#{{ emp.emp_id }}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="emp-avatar">
+                                {{ emp.first_name|slice:":1" }}{{ emp.last_name|slice:":1" }}
+                            </div>
+                            <div>
+                                <span class="fw-bold d-block text-dark">{{ emp.first_name }} {{ emp.last_name }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><a href="mailto:{{ emp.email }}" class="text-decoration-none text-muted">{{ emp.email }}</a></td>
+                    <td><span class="badge bg-light text-dark border px-2 py-1">{{ emp.department }}</span></td>
+                    <td class="text-muted">{{ emp.designation }}</td>
+                    <td class="text-end">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'update' emp.pk %}" class="action-btn action-btn-edit" title="Edit Employee">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <a href="{% url 'delete' emp.pk %}" class="action-btn action-btn-delete" title="Delete Employee">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <div class="text-muted mb-3">
+                            <i class="bi bi-people" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5>No Employees Found</h5>
+                        {% if search_query %}
+                            <p class="text-muted small">Try refining your search terms or clear the filter.</p>
+                            <a href="{% url 'dashboard' %}" class="btn btn-primary-custom btn-sm mt-2">Clear Filter</a>
+                        {% else %}
+                            <p class="text-muted small">Get started by creating your first employee profile record.</p>
+                            <a href="{% url 'add' %}" class="btn btn-primary-custom btn-sm mt-2">Add New Employee</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
