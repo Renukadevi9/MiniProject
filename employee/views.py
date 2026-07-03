@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.db.models import Q
 from .models import Employee
 from .forms import EmployeeForm
+import pandas as pd
+import numpy as np
 
 def login_view(request):
     if request.user.is_authenticated:
